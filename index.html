@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asisten Penulisan Ilmiah</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e62498 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .settings-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.5em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        input[type="password"], input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="password"]:focus, input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .help-text {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .tab-btn:hover {
+            border-color: #667eea;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-section, .output-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-section h2, .output-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 200px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+
+        .radio-group input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            background: #f0f0f0;
+        }
+
+        .file-upload.dragover {
+            background: #e8e8ff;
+            border-color: #5568d3;
+        }
+
+        .file-list {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .remove-file {
+            background: none;
+            border: none;
+            color: #c33;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-copy {
+            padding: 10px 15px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .btn-copy:hover {
+            background: #555;
+        }
+
+        .output-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chat-container {
+            background: #f9f9f9;
+            border-radius: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 85%;
+            padding: 14px 16px;
+            border-radius: 10px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .message.user .message-content {
+            background: #667eea;
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+
+        .message.bot .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 18px 18px 18px 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .message-avatar {
+            font-size: 24px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .output-placeholder {
+            color: #999;
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 1.1em;
+        }
+
+        .chat-info {
+            padding: 15px 20px;
+            background: #f0f0f0;
+            border-top: 1px solid #ddd;
+            font-size: 0.85em;
+            color: #666;
+            text-align: center;
+        }
+
+        .error {
+            background: #fee;
+            border: 2px solid #f88;
+            color: #c33;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #efe;
+            border: 2px solid #8f8;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-indicator.online {
+            background: #4a9;
+        }
+
+        .status-indicator.offline {
+            background: #c44;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Asisten Penulisan Ilmiah</h1>
+            <p>Fina Project Maju Bareng AI - Bantuan Penulisan Akademis Profesional</p>
+        </header>
+
+        <button class="settings-btn" onclick="openSettings()">⚙️</button>
+
+        <!-- Settings Modal -->
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>⚙️ Pengaturan API</h2>
+                    <button class="close-btn" onclick="closeSettings()">✕</button>
+                </div>
+                <div id="settingsError" class="error" style="display: none;"></div>
+                <div id="settingsSuccess" class="success" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="apiKeyInput">🔑 Gemini API Key</label>
+                    <input type="password" id="apiKeyInput" placeholder="Masukkan Gemini API Key Anda">
+                    <p class="help-text">🔒 API Key akan disimpan di config.json (local saja)</p>
+                </div>
+                <button class="btn-primary" onclick="saveApiKey()">
+                    💾 Simpan API Key
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('synthesis')">📖 Sintesis Jurnal (PDF)</button>
+            <button class="tab-btn" onclick="switchTab('paraphrase')">✍️ Parafrase & Gaya</button>
+            <button class="tab-btn" onclick="switchTab('quote')">🔍 Cek Kutipan</button>
+        </div>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>Input</h2>
+
+                <!-- Tab 1: Sintesis Jurnal PDF -->
+                <div id="synthesis" class="tab-content active">
+                    <div class="form-group">
+                        <label for="pdfFiles">📄 Upload PDF Jurnal (Max 5 file)</label>
+                        <div class="file-upload" id="dropZone" onclick="document.getElementById('pdfFiles').click()">
+                            <p>📁 Klik untuk upload atau drag-drop PDF di sini</p>
+                            <p style="font-size: 0.9em; color: #999; margin-top: 5px;">Format: PDF | Ukuran Max: 50MB per file</p>
+                        </div>
+                        <input type="file" id="pdfFiles" multiple accept=".pdf" style="display: none;" onchange="handleFileSelect()">
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                    <button class="btn-primary" onclick="processSynthesis()" id="synthesisBtn">
+                        <span>📤</span> Analisis PDF
+                    </button>
+                </div>
+
+                <!-- Tab 2: Parafrase -->
+                <div id="paraphrase" class="tab-content">
+                    <div class="form-group">
+                        <label>Pilih Mode</label>
+                        <div class="radio-group">
+                            <label>
+                                <input type="radio" name="styleFormat" value="paraphrase" checked>
+                                Parafrase
+                            </label>
+                            <label>
+                                <input type="radio" name="styleFormat" value="formal">
+                                Ubah ke Formal
+                            </label>
+                            <label>
+                                <input type="radio" name="styleFormat" value="citation">
+                                Format Sitasi
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="citationStyleDiv" class="form-group" style="display: none;">
+                        <label for="citationStyle">Gaya Sitasi</label>
+                        <select id="citationStyle">
+                            <option>APA</option>
+                            <option>MLA</option>
+                            <option>Chicago</option>
+                            <option>Harvard</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="textToParaphrase">Teks Masukan</label>
+                        <textarea id="textToParaphrase" placeholder="Masukkan teks yang akan diparafrase..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="processParaphrase()">
+                        <span>✍️</span> Proses Teks
+                    </button>
+                </div>
+
+                <!-- Tab 3: Cek Kutipan -->
+                <div id="quote" class="tab-content">
+                    <div class="form-group">
+                        <label for="quoteText">Kutipan</label>
+                        <textarea id="quoteText" placeholder="Masukkan kutipan yang akan diverifikasi..." style="min-height: 100px;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sourceInfo">Informasi Sumber</label>
+                        <textarea id="sourceInfo" placeholder="Judul jurnal, penulis, tahun, URL, atau informasi sumber lainnya..." style="min-height: 100px;"></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="processQuoteCheck()">
+                        <span>🔍</span> Verifikasi Kutipan
+                    </button>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="output-header">
+                    <h2>💬 Hasil Analisis</h2>
+                    <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()" style="display: none;">
+                        📋 Salin
+                    </button>
+                </div>
+
+                <div id="errorMessage" class="error" style="display: none;"></div>
+                
+                <div id="chatContainer" class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="output-placeholder">
+                            👋 Halo! Pilih fitur di atas dan mulai analisis Anda
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let selectedFiles = [];
+        let isLoading = false;
+        let currentOutput = '';
+
+        // ===== CHAT INTERFACE =====
+        function addMessage(text, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Clear placeholder jika masih ada
+            const placeholder = chatMessages.querySelector('.output-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = isUser ? '👤' : '🤖';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = text;
+
+            if (isUser) {
+                message.appendChild(content);
+                message.appendChild(avatar);
+            } else {
+                message.appendChild(avatar);
+                message.appendChild(content);
+            }
+
+            chatMessages.appendChild(message);
+            chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+
+            if (!isUser) {
+                currentOutput = text;
+                document.getElementById('copyBtn').style.display = 'inline-block';
+            }
+        }
+
+        function clearChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<div class="output-placeholder">👋 Mulai analisis baru...</div>';
+            document.getElementById('copyBtn').style.display = 'none';
+            currentOutput = '';
+        }
+
+        function showLoading() {
+            clearChat();
+            const chatMessages = document.getElementById('chatMessages');
+            const message = document.createElement('div');
+            message.className = 'message bot';
+            message.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content" style="display: flex; align-items: center; gap: 10px;">
+                    <div class="spinner" style="width: 20px; height: 20px; border-width: 2px; margin: 0;"></div>
+                    Menganalisis dengan AI...
+                </div>
+            `;
+            chatMessages.appendChild(message);
+            chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+        }
+
+        function showError(message) {
+            clearChat();
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = '❌ ' + message;
+            errorDiv.style.display = 'block';
+        }
+
+        // ===== SETTINGS & CONFIG =====
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        async function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                showSettingsError('Masukkan API Key terlebih dahulu');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/config/set-api-key`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        api_key: apiKey
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showSettingsError(result.error || 'Gagal menyimpan API Key');
+                    return;
+                }
+
+                showSettingsSuccess('✓ API Key berhasil disimpan!');
+                setTimeout(() => {
+                    closeSettings();
+                    document.getElementById('apiKeyInput').value = '';
+                }, 1500);
+            } catch (err) {
+                showSettingsError(`Error: ${err.message}`);
+            }
+        }
+
+        function showSettingsError(msg) {
+            const err = document.getElementById('settingsError');
+            err.textContent = msg;
+            err.style.display = 'block';
+            document.getElementById('settingsSuccess').style.display = 'none';
+        }
+
+        function showSettingsSuccess(msg) {
+            const suc = document.getElementById('settingsSuccess');
+            suc.textContent = msg;
+            suc.style.display = 'block';
+            document.getElementById('settingsError').style.display = 'none';
+        }
+
+        // ===== FILE HANDLING =====
+        const dropZone = document.getElementById('dropZone');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            document.getElementById('pdfFiles').files = files;
+            handleFileSelect();
+        });
+
+        function handleFileSelect() {
+            const input = document.getElementById('pdfFiles');
+            selectedFiles = Array.from(input.files);
+            updateFileList();
+        }
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = '<p style="color: #999;">Belum ada file dipilih</p>';
+                return;
+            }
+
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span>📄 ${file.name} (${(file.size / 1024).toFixed(2)} KB)</span>
+                    <button class="remove-file" onclick="removeFile(${index})">✕</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            document.getElementById('pdfFiles').value = '';
+            updateFileList();
+        }
+
+        // ===== TAB SWITCHING =====
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'styleFormat') {
+                const citationDiv = document.getElementById('citationStyleDiv');
+                citationDiv.style.display = e.target.value === 'citation' ? 'block' : 'none';
+            }
+        });
+
+        // ===== API CALLS =====
+        async function processSynthesis() {
+            if (selectedFiles.length === 0) {
+                showError('Pilih minimal 1 PDF terlebih dahulu');
+                return;
+            }
+
+            isLoading = true;
+            showLoading();
+            
+            // Tampilkan pesan user
+            addMessage(`📚 Menganalisis ${selectedFiles.length} file PDF...`, true);
+            document.getElementById('errorMessage').style.display = 'none';
+
+            const formData = new FormData();
+            selectedFiles.forEach(file => {
+                formData.append('files', file);
+            });
+
+            try {
+                const response = await fetch(`${API_URL}/api/synthesis/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showError(result.error || 'Terjadi kesalahan');
+                    return;
+                }
+
+                // Hapus loading message dan tambah hasil
+                const chatMessages = document.getElementById('chatMessages');
+                const loadingMsg = chatMessages.querySelector('.spinner');
+                if (loadingMsg) loadingMsg.closest('.message').remove();
+
+                addMessage(result.result, false);
+            } catch (err) {
+                showError(`Error: ${err.message}`);
+                console.error(err);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        async function processParaphrase() {
+            const text = document.getElementById('textToParaphrase').value.trim();
+            if (!text) {
+                showError('Masukkan teks yang akan diparafrase');
+                return;
+            }
+
+            const styleFormat = document.querySelector('input[name="styleFormat"]:checked').value;
+            const styleLabel = {
+                'paraphrase': 'Parafrase',
+                'formal': 'Ubah ke Formal',
+                'citation': 'Format Sitasi'
+            }[styleFormat];
+
+            isLoading = true;
+            showLoading();
+            clearChat();
+            addMessage(`✍️ ${styleLabel}: "${text.substring(0, 50)}..."`, true);
+            document.getElementById('errorMessage').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/api/paraphrase`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        style_format: styleFormat,
+                        citation_style: document.getElementById('citationStyle').value
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showError(result.error || 'Terjadi kesalahan');
+                    return;
+                }
+
+                const chatMessages = document.getElementById('chatMessages');
+                const loadingMsg = chatMessages.querySelector('.spinner');
+                if (loadingMsg) loadingMsg.closest('.message').remove();
+
+                addMessage(result.result, false);
+            } catch (err) {
+                showError(`Error: ${err.message}`);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        async function processQuoteCheck() {
+            const quote = document.getElementById('quoteText').value.trim();
+            const source = document.getElementById('sourceInfo').value.trim();
+
+            if (!quote || !source) {
+                showError('Masukkan kutipan dan informasi sumber');
+                return;
+            }
+
+            isLoading = true;
+            showLoading();
+            clearChat();
+            addMessage(`🔍 Verifikasi kutipan: "${quote.substring(0, 50)}..."`, true);
+            document.getElementById('errorMessage').style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_URL}/api/quote-check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        quote: quote,
+                        source: source
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    showError(result.error || 'Terjadi kesalahan');
+                    return;
+                }
+
+                const chatMessages = document.getElementById('chatMessages');
+                const loadingMsg = chatMessages.querySelector('.spinner');
+                if (loadingMsg) loadingMsg.closest('.message').remove();
+
+                addMessage(result.result, false);
+            } catch (err) {
+                showError(`Error: ${err.message}`);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(currentOutput).then(() => {
+                const copyBtn = document.getElementById('copyBtn');
+                copyBtn.textContent = '✓ Tersalin!';
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 Salin';
+                }, 2000);
+            });
+        }
+
+        // Close modal ketika klik di luar
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('settingsModal');
+            if (e.target === modal) {
+                closeSettings();
+            }
+        });
+
+        // Initialize chat pada page load
+        document.addEventListener('DOMContentLoaded', () => {
+            clearChat();
+        });
+    </script>
+</body>
+</html>
